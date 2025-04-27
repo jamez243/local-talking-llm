@@ -21,6 +21,24 @@ console = Console()
 stt = whisper.load_model("base.en")
 tts = TextToSpeechService()
 
+# Print Bark device info and test TTS speed
+console.print(f"[bold blue]Bark TTS device: {tts.device}")
+if tts.device == "cpu":
+    console.print("[bold red]WARNING: Bark is running on CPU. TTS will be extremely slow. Consider installing CUDA drivers and PyTorch with GPU support.")
+else:
+    console.print("[bold green]Bark is running on GPU. TTS should be much faster.")
+
+# Test TTS with a short string at startup
+import time as _time
+console.print("[yellow]Testing Bark TTS with 'Hello world'...")
+_t0 = _time.time()
+try:
+    _sr, _arr = tts.long_form_synthesize("Hello world")
+    _dt = _time.time() - _t0
+    console.print(f"[green]Startup TTS test took {_dt:.2f} seconds.")
+except Exception as e:
+    console.print(f"[red]Startup TTS test failed: {e}")
+
 template = """
 You are a helpful and friendly AI assistant. You are polite, respectful, and aim to provide concise responses of less 
 than 20 words.
