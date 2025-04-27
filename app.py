@@ -1,3 +1,8 @@
+import nltk
+try:
+    nltk.data.find('tokenizers/punkt')
+except LookupError:
+    nltk.download('punkt')
 import time
 import threading
 import numpy as np
