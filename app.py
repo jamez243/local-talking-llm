@@ -138,10 +138,18 @@ if __name__ == "__main__":
                 np.frombuffer(audio_data, dtype=np.int16).astype(np.float32) / 32768.0
             )
 
+            console.print(f"[green]Audio numpy array size: {audio_np.size}")
+            # Debug: print shape and dtype
+            console.print(f"[green]Audio shape: {audio_np.shape}, dtype: {audio_np.dtype}")
+
             if audio_np.size > 0:
                 start_time = time.time()
-                with console.status("Transcribing...", spinner="earth"):
-                    text = transcribe(audio_np)
+                try:
+                    with console.status("Transcribing...", spinner="earth"):
+                        text = transcribe(audio_np)
+                except Exception as e:
+                    console.print(f"[red]Transcription error: {e}")
+                    continue
                 transcribe_time = time.time() - start_time
                 console.print(f"[yellow]You: {text}")
                 console.print(f"[magenta]Transcription took {transcribe_time:.2f} seconds.")
