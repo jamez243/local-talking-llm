@@ -15,6 +15,7 @@ from langchain.chains import ConversationChain
 from langchain.prompts import PromptTemplate
 from langchain_community.llms import Ollama
 from tts import TextToSpeechService
+import torch
 
 console = Console()
 stt = whisper.load_model("base.en")
@@ -73,7 +74,7 @@ def transcribe(audio_np: np.ndarray) -> str:
     Returns:
         str: The transcribed text.
     """
-    result = stt.transcribe(audio_np, fp16=False)  # Set fp16=True if using a GPU
+    result = stt.transcribe(audio_np, fp16=True)  # Set fp16=True to use GPU if available
     text = result["text"].strip()
     return text
 
@@ -110,6 +111,8 @@ def play_audio(sample_rate, audio_array):
 
 
 if __name__ == "__main__":
+    print("CUDA available:", torch.cuda.is_available())
+    print("CUDA device:", torch.cuda.get_device_name(0) if torch.cuda.is_available() else "CPU")
     console.print("[cyan]Assistant started! Press Ctrl+C to exit.")
 
     try:
