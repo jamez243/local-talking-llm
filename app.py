@@ -139,13 +139,23 @@ if __name__ == "__main__":
             )
 
             if audio_np.size > 0:
+                start_time = time.time()
                 with console.status("Transcribing...", spinner="earth"):
                     text = transcribe(audio_np)
+                transcribe_time = time.time() - start_time
                 console.print(f"[yellow]You: {text}")
+                console.print(f"[magenta]Transcription took {transcribe_time:.2f} seconds.")
 
+                start_time = time.time()
                 with console.status("Generating response...", spinner="earth"):
                     response = get_llm_response(text)
-                    sample_rate, audio_array = tts.long_form_synthesize(response)
+                llm_time = time.time() - start_time
+                console.print(f"[magenta]LLM response took {llm_time:.2f} seconds.")
+
+                start_time = time.time()
+                sample_rate, audio_array = tts.long_form_synthesize(response)
+                tts_time = time.time() - start_time
+                console.print(f"[magenta]TTS synthesis took {tts_time:.2f} seconds.")
 
                 console.print(f"[cyan]Assistant: {response}")
                 play_audio(sample_rate, audio_array)
